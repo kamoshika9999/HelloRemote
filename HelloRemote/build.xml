@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="remotedebug" name="Create Runnable Jar for Project HelloRemote">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+    <property name="dir.jarfile" value="//192.168.9.112/raspberry_pi"/>
+
+	<property name="raspberrypi" value="192.168.9.112" />
+	<property name="raspberryfolder" value="/home/pi/samba" />
+	<property name="username" value="pi" />
+	<property name="password" value="raspberry" />
+	
+	<target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/fxtest.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="application.Main"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${dir.buildfile}/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/OPENCV3/pleiades-4.8/pleiades/eclipse/plugins/org.eclipse.fx.ide.css.jfx8_3.3.0.201805280700.jar"/>
+        </jar>
+    </target>
+	
+	<target name="remotedebug" depends="create_run_jar">
+		<echo>"Starting ${raspberrypi}:${raspberryfolder}/${jar.filename} in debug mode"</echo>
+		<sshexec trust="true" host="${raspberrypi}" username="${username}" password="${password}" failonerror="true" usepty="true" command="DISPLAY=:0 java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=*:4001,suspend=y -classpath ${raspberryfolder} -jar ${raspberryfolder}/fxtest.jar" />
+	</target>
+</project>
